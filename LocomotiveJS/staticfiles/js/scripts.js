@@ -1,5 +1,5 @@
 function checkAjax() {
-	$.get('/upload', function(data){
+	$.get('/ajax', function(data){
 		$('#fillmeh').text(data.name+ " "+data.age);
 	});
 }

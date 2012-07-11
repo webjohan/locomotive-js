@@ -132,7 +132,8 @@ function _toJson(data) {
  */
 templateRenderer.init({
 	autoescape: true,
-	root: './'
+	root: './',
+	encoding: 'unicode'
 });
 
 String.format = function(text) {
