@@ -1,9 +1,17 @@
 var processor = require('./requestprocessor'),
     urllib = require('url'),
-    resolver = require('./resolver');
+    resolver = require('./resolver'),
+    http = require('http');
 
 var app = module.exports = {
-    handlers : ["/", "/start", "/staticfiles/", "/ajax", "/findOne"],
+	start: function(port){
+		var self = this;
+		http.createServer(function(request, response){
+			self.preProcess(self, request, response);	
+		}).listen(port);
+		return self;
+	},
+	handlers : ["/", "/start", "/staticfiles/", "/ajax", "/findOne"],
     route : function(url, fn, type) {
         this.handlers.push({ url: url, fn: fn, type: type });
     },

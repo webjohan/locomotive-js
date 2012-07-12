@@ -1,11 +1,7 @@
-var http = require('http'),
-	app = require('./app'),
+var app = require('./app').start('1337'),
 	resolver = require('./resolver'),
 	db = require('./db');
 
-http.createServer(function(request, response){
-	app.preProcess(app, request, response);	
-}).listen('1337');
 
 app.get('/staticfiles/', function(request, response){
 	filename = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.length);
