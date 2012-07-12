@@ -1,0 +1,6 @@
+locomotive.js is a webframework aimed at speeding up the prototyping stage of a products development.
+
+it is aimed for webdevelopers that are somewhat familiar with the javascript language.
+
+featuring a easy to use & simplistic nosql database-api and a get/post() syntactic sugar locomotive.js will
+enable you to put out a blazingly fast prototype for your customer to view.

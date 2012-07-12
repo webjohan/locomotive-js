@@ -55,7 +55,6 @@ function render_as_json(data, httpResponse){
 }
 
 function render_to_response(data, asContentType, httpResponse) {
-	ctype = _generateContentType(asContentType);
 	httpResponse.writeHeader(200, _generateContentType(asContentType));
 	httpResponse.end(data);
 }

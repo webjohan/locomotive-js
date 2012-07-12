@@ -6,5 +6,8 @@
 </head>
 <body>
 	<h1>IM A USER</h1>
-	{{ user.name }} apan hoppar sssdl
+	{% for item in users -%}
+    	{{ item.name }}<br/>
+	{%- endfor %}
+	<a href="/start">Go to start</a>
 </html>
