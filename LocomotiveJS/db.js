@@ -6,31 +6,31 @@ var db = module.exports = {
 	find: function(object, collection, fn) {
 		this.connect("localhost:27017/"+collection);
 		var context = [];
+		var self = this;
 		this.db.collection(collection).find(object, function(err, collection){
 			if (err || !collection) resolver.raise404(response);
 			else collection.forEach(function(object){
-				console.log(object);
-				context.push(object);
+				context.push(self._latchModelProperties(object));
 			});
 			return fn(context);
 		});
 	},
 	save: function(object, collection, fn) {
 		this.connect("localhost:27017/"+collection);
+		var self = this;
 		this.db.collection(collection).save(object, function(err, saved){
 			if (err || !saved) return false;
-			else return fn(object);
+			else return fn(self._latchModelProperties(object));
 		});
 	},
+	create: function(object){
+          if (object === null)
+           	return this._latchModelProperties({});
+           return this._latchModelProperties(object);
+ 	},
 	_latchModelProperties: function (object){
-		object.create = function() {
-			for(var prop in object) {
-				if (object.hasOwnProperty(prop))
-					console.log(prop);
-			}
-		};
-		object.save = function() {
-		};
+		object.create = function() {};
+		object.save = function() {};
 		return object;
 	}
 };
