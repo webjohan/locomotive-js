@@ -11,7 +11,7 @@ var app = module.exports = {
 		}).listen(port);
 		return self;
 	},
-	handlers : ["/", "/start", "/staticfiles/", "/ajax", "/findOne"],
+	handlers : ["/", "/start", "/staticfiles/", "/ajax", "/find", "/save"],
     route : function(url, fn, type) {
         this.handlers.push({ url: url, fn: fn, type: type });
     },

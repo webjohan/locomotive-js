@@ -35,12 +35,6 @@ function resolveResourceOr404(filename, httpRequest, httpResponse) {
 	var root = path.join(path.dirname(__filename), '');
 	paperboy
 		.deliver(root, httpRequest, httpResponse)
-		.before(function(root){
-			//console.log("about to deliver staticfile: "+filename);
-		})
-		.after(function(){
-			//console.log("file was delivered with 200");
-		})
 		.error(function(e){
 			raise500(httpResponse);
 		})
@@ -132,7 +126,8 @@ function _toJson(data) {
 templateRenderer.init({
 	autoescape: true,
 	root: './',
-	encoding: 'unicode'
+	encoding: 'unicode',
+	cache: false,
 });
 
 String.format = function(text) {

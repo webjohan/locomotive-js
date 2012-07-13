@@ -1,6 +1,7 @@
 var app = require('./app').start('1337'),
 	resolver = require('./resolver'),
-	db = require('./db');
+	db = require('./db'),
+	models = require('./models');
 
 
 app.get('/staticfiles/', function(request, response){
@@ -36,6 +37,14 @@ app.get('/ajax', function(request, response) {
 app.get('/find', function(request, response) {
 	db.find({}, 'users', function(object){
 		var context = {users: object};
+		resolver.renderTemplateOr404('users.html', context, request, response);
+	});
+});
+
+app.get('/save', function(request, response){
+	var user = models.User();
+	db.save(user, 'users', function(object){
+		var context = {user:object};
 		resolver.renderTemplateOr404('users.html', context, request, response);
 	});
 });

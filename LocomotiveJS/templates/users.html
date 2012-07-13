@@ -8,6 +8,9 @@
 	<h1>IM A USER</h1>
 	{% for item in users -%}
     	{{ item.name }}<br/>
+    	{{ item.email }}
 	{%- endfor %}
 	<a href="/start">Go to start</a>
+	<br/><br/><br/>
+	{{ user.age }}
 </html>
