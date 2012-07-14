@@ -3,10 +3,29 @@ var path = require('path'),
 	paperboy = require('paperboy'),
 	templateRenderer = require('swig');
 
-function renderTemplateOr404(template, data, httpRequest, httpResponse) {
+/**
+ * Configuration below
+ */
+templateRenderer.init({
+	autoescape: true,
+	root: './',
+	encoding: 'unicode',
+	cache: false,
+});
+
+String.format = function(text) {
+    if (arguments.length <= 1)
+        return text;
+    var tokenCount = arguments.length - 2;
+    for (var token = 0; token <= tokenCount; token++)
+        text = text.replace(new RegExp( "\\{" + token + "\\}", "gi" ), arguments[ token + 1 ]);
+    return text;
+};
+
+var renderer = module.exports = {
+  renderTemplateOr404 : function (template, data, httpRequest, httpResponse) {
 	/**
 	 * Resolves a template and compiles it with data from the view
-	 * This will be refactored massively.
 	 */
 	var templatepath, compiledTemplate, html;
 	
@@ -26,8 +45,8 @@ function renderTemplateOr404(template, data, httpRequest, httpResponse) {
 			raise404(httpResponse);
 		}
 	});
-}
-function resolveResourceOr404(filename, httpRequest, httpResponse) {
+  },
+  resolveResourceOr404 : function (filename, httpRequest, httpResponse) {
 	/**
 	 * Resolves filename into a resource in the staticfiles dir for serving to user.
 	 * This will be refactored massively.
@@ -41,32 +60,30 @@ function resolveResourceOr404(filename, httpRequest, httpResponse) {
 		.otherwise(function(){
 			raise404(httpResponse);
 		});
-}
-
-function render_as_json(data, httpResponse){
+  },
+  render_as_json : function (data, httpResponse){
 	httpResponse.writeHeader(200, _generateContentType('json'));
 	httpResponse.end(_toJson(data));
-}
-
-function render_to_response(data, asContentType, httpResponse) {
+  },
+  render_to_response : function (data, asContentType, httpResponse) {
 	httpResponse.writeHeader(200, _generateContentType(asContentType));
 	httpResponse.end(data);
-}
+  },
+  raise404 : function (httpResponse) {
+	this.raiseErrorTemplate(404, httpResponse);
+  },
+  raise500 : function (httpResponse) {
+	this.raiseErrorTemplate(500, httpResponse);
+  },
+  raiseErrorTemplate : function(statusCode, httpResponse) {
+    var html = _getErrorTemplate(statusCode);
+    httpResponse.writeHeader(statusCode, _generateContentType('html'));
+    httpResponse.end(html);
+  }
+};
 
-function raise404(httpResponse) {
-	var html = _getErrorTemplate(404);
-	httpResponse.writeHeader(404, _generateContentType('html'));
-	httpResponse.end(html);
-}
-function raise500(httpResponse) {
-	var html = _getErrorTemplate(500);
-	httpResponse.writeHeader(500, _generateContentType('html'));
-	httpResponse.end(html);
-}
 
-/**
- * UTILS SHOULD MOVE
- */
+
 function _render(html, httpResponse) {
 	httpResponse.writeHeader(200, _generateContentType('html'));
 	httpResponse.end(html);
@@ -113,37 +130,9 @@ function _generateContentType(contentType) {
 
 function _toJson(data) {
 	var json = '{';
-	for (property in data){
+	for (property in data)
 	    json += '"'+property+'"'+':'+'"'+data[property]+'",';   
-	}
 	json = json.substring(0, json.lastIndexOf(','));
 	json += '}';
 	return json;
 }
-/**
- * Configuration below
- */
-templateRenderer.init({
-	autoescape: true,
-	root: './',
-	encoding: 'unicode',
-	cache: false,
-});
-
-String.format = function(text) {
-    if (arguments.length <= 1) {
-        return text;
-    }
-    var tokenCount = arguments.length - 2;
-    for (var token = 0; token <= tokenCount; token++ ) {
-        text = text.replace( new RegExp( "\\{" + token + "\\}", "gi" ), arguments[ token + 1 ] );
-    }
-    return text;
-};
-
-exports.renderTemplateOr404 = renderTemplateOr404;
-exports.resolveResourceOr404 = resolveResourceOr404;
-exports.render_to_response = render_to_response;
-exports.render_as_json = render_as_json;
-exports.raise404 = raise404;
-exports.raise500 = raise500;

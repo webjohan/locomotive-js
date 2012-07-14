@@ -3,25 +3,26 @@ var app = require('./app').start('1337'),
 	db = require('./db');
 
 
-app.get('/staticfiles/', function(request, response){
+app.get('/staticfiles/', function(request, response) {
+  //think of way to not have this
 	filename = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.length);
 	resolver.resolveResourceOr404(filename, request, response);
 });
 
-app.get('/', function(request, response){
+app.get('/', function(request, response) {
 	response.writeHead(200, {"Content-Type": "text/plain"});
 	response.write("Request handler 'root' was called.");
 	response.end();
 });
 
-app.get('/start', function(request, response){
+app.get('/start', function(request, response) {
 	db.find({}, 'users', function(object){
 		var context = {};
 		resolver.renderTemplateOr404('start.html', context, request, response);
 	});
 });
 
-app.post('/start', function(request, response){
+app.post('/start', function(request, response) {
 	request.on('end', function(){
 		var post = request.data; //sanitize data
 		resolver.renderTemplateOr404('start.html', post, request, response);
@@ -40,7 +41,7 @@ app.get('/find', function(request, response) {
 	});
 });
 
-app.get('/save', function(request, response){
+app.get('/save', function(request, response) {
 	var user = db.create();
 	db.save(user, 'users', function(object){
 		var context = {user:object};

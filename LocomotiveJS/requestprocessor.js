@@ -19,18 +19,18 @@ exports.preRequest = function preRequest(request) {
 	}
 };
 
+
 function _is_ajax(headers) {
-	for (header in headers) {
-		if (headers[header] === 'XMLHttpRequest') {
+	for (header in headers)
+		if (headers[header] === 'XMLHttpRequest')
 			return true;
-		}
-	}
 	return false;
 }
 
 function _transformRequest(request, newProperties) {
 	/**
 	 * implement both post and get data. call to api should look like this request.data.get/post
+	 * get method should return a literal with {"queryStringVar":"queryStringVal"}
 	 */
 	for(property in newProperties){
 		request[property] = newProperties[property];
