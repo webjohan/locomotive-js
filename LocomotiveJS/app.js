@@ -1,7 +1,8 @@
 var processor = require('./requestprocessor'),
     urllib = require('url'),
     resolver = require('./resolver'),
-    http = require('http');
+    http = require('http'),
+    urls = require('./urls').registerUrls();
 
 var app = module.exports = {
 	start: function(port){
@@ -11,7 +12,7 @@ var app = module.exports = {
 		}).listen(port);
 		return self;
 	},
-	handlers : ["/", "/start", "/staticfiles/", "/ajax", "/find", "/save"],
+	handlers : urls,
     route : function(url, fn, type) {
         this.handlers.push({ url: url, fn: fn, type: type });
     },

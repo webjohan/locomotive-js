@@ -4,7 +4,7 @@ var app = require('./app').start('1337'),
 
 
 app.get('/staticfiles/', function(request, response) {
-  //think of way to not have this
+	//think of way to not have this
 	filename = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.length);
 	resolver.resolveResourceOr404(filename, request, response);
 });
