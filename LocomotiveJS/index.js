@@ -9,7 +9,7 @@ app.get('/staticfiles/', function(request, response) {
 	resolver.resolveResourceOr404(filename, request, response);
 });
 
-app.get('/', function(request, response) {
+app.get('/:id', function(id, request, response) {
 	response.writeHead(200, {"Content-Type": "text/plain"});
 	response.write("Request handler 'root' was called.");
 	response.end();
