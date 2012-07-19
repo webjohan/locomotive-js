@@ -25,8 +25,15 @@ var app = module.exports = {
         var l = app.handlers.length, handler;
         for (var i = 0; i < l; i++) {
         	handler = app.handlers[i];
-            if (handler.url == path && request.method === handler['type'])
-            	return handler.fn(request, response);
+        	if(handler.url !== undefined){
+        		var obj = _parseUrl(handler.url, path, request);
+        		if(obj.parsed){
+        			path = obj.url;
+        		}
+        		if (handler.url === path && request.method === handler['type']) {
+        			return handler.fn(request, response);
+        		}
+        	}
         }
         resolver.raise404(response);
     },
@@ -37,3 +44,21 @@ var app = module.exports = {
     	this.route(url, fn, 'POST');
     }
 };
+
+function _parseUrl(handlerUrl, actualUrl, request) {
+	var listOfRegexes = getRegexes(); 
+	for(regexp in listOfRegexes){
+		if(handlerUrl.indexOf(regexp) !== -1){
+			if(actualUrl.match(listOfRegexes[regexp])) {
+				var id = actualUrl.substring(handlerUrl.indexOf(regexp)).replace('/','');
+				request.view = { 'id':id };
+				return {'parsed':true, 'url':handlerUrl, 'request':request};
+			}
+		}
+		return {'parsed':true, 'url':actualUrl};
+	}
+}
+
+function getRegexes() {
+	return {':id': /^(\/\w+\/\d+\/$)/ };
+}

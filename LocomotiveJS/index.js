@@ -31,18 +31,22 @@ app.post('/start', function(request, response) {
 
 app.get('/ajax', function(request, response) {
 	var context = {'name':'awesome_developer', 'age':'28'};
+	if(request.is_ajax()){
+		context = {'name':'jag e ajax', 'age':'30'};
+	}
 	resolver.render_as_json(context, response);
 });
 
-app.get('/find', function(request, response) {
+app.get('/find/:id/', function(request, response) {
 	db.find({}, 'users', function(object){
+		object.superid = request.view.id;
 		var context = {users: object};
 		resolver.renderTemplateOr404('users.html', context, request, response);
 	});
 });
 
 app.get('/save', function(request, response) {
-	var user = db.create();
+	var user = {};
 	db.save(user, 'users', function(object){
 		var context = {user:object};
 		resolver.renderTemplateOr404('users.html', context, request, response);

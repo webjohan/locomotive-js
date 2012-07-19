@@ -3,6 +3,7 @@ var path = require('path'),
 	paperboy = require('paperboy'),
 	templateRenderer = require('swig');
 
+
 /**
  * Configuration below
  */

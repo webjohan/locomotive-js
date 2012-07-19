@@ -45,5 +45,3 @@ function _transformPostdata(data) {
 	});
 	return {'data': postFields };
 }
-
-//TODO request.is_ajax
