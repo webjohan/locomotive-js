@@ -6,17 +6,11 @@
 	<title>IMMA USER!</title>
 </head>
 <body>
-	<h1 id="blueHeader">IM {{ users.firstName }} {{ users.lastName }} with id {{ users.superid }}</h1>
-	{% for item in users -%}
-    	{{ item.name }}<br/>
-    	{{ item.email }}<br/>
-    	{{ item.age }}<br/>
-    	{{ item.bulle }}<br/>
-    	{{ item.gris }}
-	{%- endfor %}
+	<h1 id="blueHeader">IM user with id {{ user.superid }}</h1>
+	{{ user.name }}<br/>
+	{{ user.email }}<br/><br/>
 	<a href="/start">Go to start</a>
 	<br/><br/><br/>
-	{{ user.age }}{{ user.name }}{{ user.bulle }}
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script src="/staticfiles/js/scripts.js"></script>
 </html>

@@ -29,7 +29,7 @@ var db = module.exports = {
            return this._latchModelProperties(object);
  	},
 	_latchModelProperties: function (object){
-		object.create = function() {};
+		object.create = function() { console.log("triggerd a create"); };
 		object.save = function() {};
 		return object;
 	}

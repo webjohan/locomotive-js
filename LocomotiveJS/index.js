@@ -11,7 +11,7 @@ app.get('/', function(request, response) {
 app.get('/start', function(request, response) {
 	db.find({}, 'users', function(object){
 		var context = {};
-		resolver.renderTemplateOr404('', context, request, response);
+		resolver.renderTemplateOr404('start.html', context, request, response);
 	});
 });
 
@@ -31,12 +31,15 @@ app.get('/ajax', function(request, response) {
 });
 
 app.get('/find/view/{id}/', function(request, response) {
-	db.find({}, 'users', function(object){
+	//outside the db scope we have access to the request.view object.
+	//thus we can build our db query from here.
+	db.find({'name':'Henrik'}, 'users', function(object){
+		object = object[0];
+		console.log(object);
+		object.create();
 		object.superid = request.view.id;
-		object.firstName = request.view.firstName;
-		object.lastName = request.view.lastName;
-		var context = {users: object};
-		resolver.renderTemplateOr404('users.html', context, request, response);
+		var context = {user: object};
+		resolver.renderTemplateOr404('user.html', context, request, response);
 	});
 });
 
