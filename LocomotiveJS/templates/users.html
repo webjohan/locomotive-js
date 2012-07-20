@@ -5,7 +5,7 @@
 <title>IMMA USER!</title>
 </head>
 <body>
-	<h1>IM A USER with id {{ users.superid }}</h1>
+	<h1>IM {{ users.firstName }} {{ users.lastName }} with id {{ users.superid }}</h1>
 	{% for item in users -%}
     	{{ item.name }}<br/>
     	{{ item.email }}<br/>

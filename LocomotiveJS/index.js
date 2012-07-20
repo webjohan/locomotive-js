@@ -37,9 +37,11 @@ app.get('/ajax', function(request, response) {
 	resolver.render_as_json(context, response);
 });
 
-app.get('/find/:id/', function(request, response) {
+app.get('/find/:id/view/:firstName/:lastName/', function(request, response) {
 	db.find({}, 'users', function(object){
 		object.superid = request.view.id;
+		object.firstName = request.view.firstName;
+		object.lastName = request.view.lastName;
 		var context = {users: object};
 		resolver.renderTemplateOr404('users.html', context, request, response);
 	});

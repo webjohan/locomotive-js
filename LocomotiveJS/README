@@ -4,3 +4,21 @@ it is aimed for webdevelopers that are somewhat familiar with the javascript lan
 
 featuring a easy to use & simplistic nosql database-api and a get/post() syntactic sugar locomotive.js will
 enable you to put out a blazingly fast prototype for your customer to view.
+
+----
+
+When creating a view you always get access to the views varables with the view object.
+The variables from the url is always stored as the name that you assign it.
+
+The :id is optional and specified in your urls configuration.
+
+Creating a view:
+
+app.get('/someURL/:id/', function(request, response) {
+
+	var id = request.view.id;
+	
+	var context = { 'userid':id };
+		
+	resolver.renderTemplate('/someTemplate.html', context, request, response);
+});
