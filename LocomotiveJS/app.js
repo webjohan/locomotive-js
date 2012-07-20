@@ -8,7 +8,8 @@ var app = module.exports = {
 	start: function(port){
 		var self = this;
 		http.createServer(function(request, response){
-			self.preProcess(self, request, response);	
+			self.preProcess(self, request, response);
+			//init middlewares from settings
 		}).listen(port);
 		return self;
 	},
@@ -21,17 +22,17 @@ var app = module.exports = {
         var path = urllib.parse(request.url).pathname;
         if(path.indexOf('/staticfiles/') != -1) {
         	path = '/staticfiles/';
+        	filename = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.length);
+        	return resolver.resolveResourceOr404(filename, request, response);
         }
         var l = app.handlers.length, handler;
         for (var i = 0; i < l; i++) {
         	handler = app.handlers[i];
         	if(handler.url !== undefined){
         		var obj = _parseUrl(handler.url, path, request);
-        		if(obj !== undefined){
-        			if(obj.parsed){
+        		if(obj !== undefined)
+        			if(obj.parsed)
             			path = obj.url;
-            		}	
-        		}
         		if (handler.url === path && request.method === handler['type']) {
         			return handler.fn(request, response);
         		}
@@ -47,21 +48,21 @@ var app = module.exports = {
     }
 };
 
-function _parseUrl(regedUrl, url, request) {
+function _parseUrl(regexifiedUrl, url, request) {
     var transformedurl = "";
     var exps = urls.regexps();
     var foundExps = [];
-    var orgUrl = regedUrl;
+    var orgUrl = regexifiedUrl;
     request.view = {};
 
     for(ex in exps){
-    	if(regedUrl.indexOf(ex)){
+    	if(regexifiedUrl.indexOf(ex)){
     		foundExps.push(ex);
     	}
     }
     for(exp in foundExps) {
-    	if(regedUrl.indexOf(foundExps[exp]) !== -1) {
-    		transformedurl = transformedurl.length === 0 ? regedUrl.replace(foundExps[exp], exps[foundExps[exp]]) : transformedurl.replace(foundExps[exp], exps[foundExps[exp]]);
+    	if(regexifiedUrl.indexOf(foundExps[exp]) !== -1) {
+    		transformedurl = transformedurl.length === 0 ? regexifiedUrl.replace(foundExps[exp], exps[foundExps[exp]]) : transformedurl.replace(foundExps[exp], exps[foundExps[exp]]);
     	} else {
     		return {'parsed':true, 'url':url};
     	}
@@ -69,9 +70,9 @@ function _parseUrl(regedUrl, url, request) {
 		if(url.match(regex)){
 			var name, value;
 			for(exp in foundExps) {
-				name = foundExps[exp].replace(':','');
-				value = url.substring(regedUrl.indexOf(foundExps[exp])).replace(/\/\w+\/?(\w+\/)+/,'').replace('/','');
-				regedUrl = regedUrl.replace(foundExps[exp], value);
+				name = foundExps[exp].replace('{','').replace('}','');
+				value = url.substring(regexifiedUrl.indexOf(foundExps[exp])).replace(/\/\w+\/?(\w+\/)+/,'').replace('/','');
+				regexifiedUrl = regexifiedUrl.replace(foundExps[exp], value);
 				request.view[name] = value;
 			}
 			return {'parsed':true, 'url':orgUrl, 'request':request};

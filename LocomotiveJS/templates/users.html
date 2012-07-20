@@ -1,11 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>IMMA USER!</title>
+	<link href="/staticfiles/css/styles.css" rel="stylesheet" />
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>IMMA USER!</title>
 </head>
 <body>
-	<h1>IM {{ users.firstName }} {{ users.lastName }} with id {{ users.superid }}</h1>
+	<h1 id="blueHeader">IM {{ users.firstName }} {{ users.lastName }} with id {{ users.superid }}</h1>
 	{% for item in users -%}
     	{{ item.name }}<br/>
     	{{ item.email }}<br/>
@@ -16,4 +17,6 @@
 	<a href="/start">Go to start</a>
 	<br/><br/><br/>
 	{{ user.age }}{{ user.name }}{{ user.bulle }}
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="/staticfiles/js/scripts.js"></script>
 </html>

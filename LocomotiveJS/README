@@ -7,18 +7,44 @@ enable you to put out a blazingly fast prototype for your customer to view.
 
 ----
 
+Starting the server is as easy as a sunday morning:
+
+var app = require('./app').start(//portnumber//);
+
 When creating a view you always get access to the views varables with the view object.
 The variables from the url is always stored as the name that you assign it.
 
-The :id is optional and specified in your urls configuration.
+Resolving to a response is very easy:
 
-Creating a view:
+app.get('/', function(request, response){
+	response.writeHead(200, {"Content-Type": "text/plain"});
+	response.write("Request handler 'root' was called.");
+	response.end();
+});
 
-app.get('/someURL/:id/', function(request, response) {
+Creating a more advanced view:
 
+app.get('/someURL/{id}/', function(request, response) {
 	var id = request.view.id;
-	
 	var context = { 'userid':id };
-		
 	resolver.renderTemplate('/someTemplate.html', context, request, response);
 });
+
+The {id} is optional and specified in your urls configuration.
+
+Specifying a variable to use in the url is done in the urls.js like this:
+
+regexps : function() {
+			return {'{id}':'(\\d+)', '{firstName}':'(\\w+)', '{lastName}':'(\\w+)' };
+}
+
+This will enable you to use the {id}/{firstName}/{lastName} in your view.
+When specifying a {varname}, you automatically get a an object on your request called a "view object".
+This is accessed like so
+
+var something = request.view.varname; // varname is the name of your variable, ie. firstName, lastName.
+
+Each view, if you specify a template takes an optional context object, which is a normal javascript literal.
+If not, the template renders just fine!
+
+Should you leave out a templatename, a Template Missing is thrown and raised.

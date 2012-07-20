@@ -26,10 +26,11 @@ var renderer = module.exports = {
 	/**
 	 * Resolves a template and compiles it with data from the view
 	 */
-	var templatepath, compiledTemplate, html;
+	var templatepath, compiledTemplate, html, self;
+	self = this;
 	
 	if (template === null || template === undefined || template === ''){
-		template = arguments.callee.caller.name + ".html";
+		self.raiseTemplateMissing(httpRequest, httpResponse);
 	}
 	templatepath = 'templates/'+template; //this folder should be read from props.
 	path.exists(templatepath, function(exists) {
@@ -41,7 +42,7 @@ var renderer = module.exports = {
 				html = compiledTemplate.render();
 			_render(html, httpResponse);
 		} else {
-			raise404(httpResponse);
+			self.raiseTemplateMissing(httpResponse);
 		}
 	});
   },
@@ -54,10 +55,10 @@ var renderer = module.exports = {
 	paperboy
 		.deliver(root, httpRequest, httpResponse)
 		.error(function(e){
-			raise500(httpResponse);
+			this.raise500(httpResponse);
 		})
 		.otherwise(function(){
-			raise404(httpResponse);
+			this.raise404(httpResponse);
 		});
   },
   render_as_json : function (data, httpResponse){
@@ -74,13 +75,21 @@ var renderer = module.exports = {
   raise500 : function (httpResponse) {
 	this.raiseErrorTemplate(500, httpResponse);
   },
-  raiseErrorTemplate : function(statusCode, httpResponse) {
-    var html = _getErrorTemplate(statusCode);
+  raiseErrorTemplate : function(statusCode, httpResponse, data) {
+    var html = _getErrorTemplate(statusCode, data);
     httpResponse.writeHeader(statusCode, _generateContentType('html'));
     httpResponse.end(html);
+  },
+  raiseTemplateMissing: function(httpRequest, httpResponse){
+	  var error = new Error("Template missing");
+	  var self = this;
+	  _formatStackTrace(error.stack, function(object){
+		  var errorData = { 'stack': object, 'url':httpRequest.url };
+		  self.raiseErrorTemplate("templateError", httpResponse, errorData);
+		  throw error;
+	  });
   }
 };
-
 
 
 function _render(html, httpResponse) {
@@ -88,11 +97,11 @@ function _render(html, httpResponse) {
 	httpResponse.end(html);
 }
 
-function _getErrorTemplate(statusCode){
+function _getErrorTemplate(statusCode, data){
 	var errorpath, compiledTemplate, html;
 	errorpath = String.format("templates/errors/{0}.html", statusCode);
 	compiledTemplate = templateRenderer.compileFile(errorpath);
-	html = compiledTemplate.render();
+	html = compiledTemplate.render(data !== undefined ? data : null);
 	return html;
 }
 
@@ -134,4 +143,48 @@ function _toJson(data) {
 	json = json.substring(0, json.lastIndexOf(','));
 	json += '}';
 	return json;
+}
+
+function _formatStackTrace(stacktrace, fn) {
+	stacktrace = stacktrace.replace(/\sat\s/g,"<br/>at ");
+	var array = stacktrace.split('<br/>at ');
+	var newDict = {};
+	for(line in array) {
+		var indexOfFirstColon = array[line].indexOf('.js:');
+		var substringd = array[line].substring(indexOfFirstColon).replace('.js:','');
+		var substringd2 = substringd.replace(/(\:\d+)(\W+)?/, '');
+		newDict[substringd2] = line;
+	}
+	var unsortedArray = _createUnsortedKeyArray(newDict);
+	
+	sortedArray = _sortArray(unsortedArray);
+    var closestStackTraceLine = array[newDict[sortedArray[0].toString()]];
+    array[newDict[sortedArray[0].toString()]] = '<span class="stacktraceError"><b>'+closestStackTraceLine+'</b></span>';
+    stacktrace = array.join("<br/>at ");
+	return fn(stacktrace);
+}
+
+function _createUnsortedKeyArray(dict) {
+	var unsortedArray = [];
+	for(key in dict) {
+		if(!isNaN(key))
+			unsortedArray.push(Number(key));
+	}
+	return unsortedArray;
+}
+
+function _sortArray(sortedArray) {
+	var swapped;
+    do {
+        swapped = false;
+        for (var i=0; i < sortedArray.length-1; i++) {
+            if (sortedArray[i] > sortedArray[i+1]) {
+                var temp = sortedArray[i];
+                sortedArray[i] = sortedArray[i+1];
+                sortedArray[i+1] = temp;
+                swapped = true;
+            }
+        }
+    } while (swapped);
+	return sortedArray;
 }

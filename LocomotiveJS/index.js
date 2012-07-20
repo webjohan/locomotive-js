@@ -2,13 +2,6 @@ var app = require('./app').start('1337'),
 	resolver = require('./resolver'),
 	db = require('./db');
 
-
-app.get('/staticfiles/', function(request, response) {
-	//think of way to not have this
-	filename = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.length);
-	resolver.resolveResourceOr404(filename, request, response);
-});
-
 app.get('/', function(request, response) {
 	response.writeHead(200, {"Content-Type": "text/plain"});
 	response.write("Request handler 'root' was called.");
@@ -18,7 +11,7 @@ app.get('/', function(request, response) {
 app.get('/start', function(request, response) {
 	db.find({}, 'users', function(object){
 		var context = {};
-		resolver.renderTemplateOr404('start.html', context, request, response);
+		resolver.renderTemplateOr404('', context, request, response);
 	});
 });
 
@@ -37,7 +30,7 @@ app.get('/ajax', function(request, response) {
 	resolver.render_as_json(context, response);
 });
 
-app.get('/find/:id/view/:firstName/:lastName/', function(request, response) {
+app.get('/find/view/{id}/', function(request, response) {
 	db.find({}, 'users', function(object){
 		object.superid = request.view.id;
 		object.firstName = request.view.firstName;
