@@ -86,7 +86,6 @@ var renderer = module.exports = {
 	  _formatStackTrace(error.stack, function(object){
 		  var errorData = { 'stack': object, 'url':httpRequest.url };
 		  self.raiseErrorTemplate("templateError", httpResponse, errorData);
-		  throw error;
 	  });
   }
 };

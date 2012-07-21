@@ -54,9 +54,8 @@ function _parseUrl(regexifiedUrl, url, request) {
     var foundExps = [];
     var orgUrl = regexifiedUrl;
     request.view = {};
-
     for(ex in exps){
-    	if(regexifiedUrl.indexOf(ex)){
+    	if(regexifiedUrl.indexOf(ex) !== -1){
     		foundExps.push(ex);
     	}
     }
@@ -71,11 +70,16 @@ function _parseUrl(regexifiedUrl, url, request) {
 			var name, value;
 			for(exp in foundExps) {
 				name = foundExps[exp].replace('{','').replace('}','');
-				value = url.substring(regexifiedUrl.indexOf(foundExps[exp])).replace(/\/\w+\/?(\w+\/)+/,'').replace('/','');
+				value = url.substring(regexifiedUrl.indexOf(foundExps[exp])).replace(/\/\w+\/?(\w+\/)+/,'').replace(/\/\w+/,'').replace('/','');
 				regexifiedUrl = regexifiedUrl.replace(foundExps[exp], value);
 				request.view[name] = value;
 			}
-			return {'parsed':true, 'url':orgUrl, 'request':request};
+			if(regexifiedUrl.length === url.length){
+				return {'parsed':true, 'url':orgUrl, 'request':request};
+			} else {
+				return {'parsed':true, 'url':url, 'request':request};
+			}
+			
 		}
     }
 }
