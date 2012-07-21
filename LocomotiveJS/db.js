@@ -23,7 +23,8 @@ var db = module.exports = {
 			else return fn(self._latchModelProperties(object));
 		});
 	},
-	create: function(object){
+	createQuery : function(string){},
+	createObject: function(object){
           if (object === null)
            	return this._latchModelProperties({});
            return this._latchModelProperties(object);

@@ -42,6 +42,7 @@ var app = module.exports = {
         resolver.raiseViewDoesNotExist(request, response);
     },
     get: function(url, fn) {
+    	if(url.charAt(url.length-1)!== '/') url += '/';
     	this.route(url, fn, 'GET');
     },
     post: function(url, fn) {

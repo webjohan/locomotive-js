@@ -22,7 +22,7 @@ app.post('/start', function(request, response) {
 	});
 });
 
-app.get('/ajax', function(request, response) {
+app.get('/ajax/', function(request, response) {
 	var context = {'name':'awesome_developer', 'age':'28'};
 	if(request.is_ajax()){
 		context = {'name':'jag e ajax', 'age':'30'};
@@ -41,7 +41,7 @@ app.get('/find/view/{id}/', function(request, response) {
 	});
 });
 
-app.get('/save', function(request, response) {
+app.get('/save/', function(request, response) {
 	var user = {};
 	db.save(user, 'users', function(object){
 		var context = {user:object};

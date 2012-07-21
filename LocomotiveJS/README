@@ -1,20 +1,25 @@
-locomotive.js is a webframework aimed at speeding up the prototyping stage of a products development.
+locomotive.js is a node.js webframework targeted on easy development during a prototyping stage.
 
-it is aimed for webdevelopers that are somewhat familiar with the javascript language.
+It features:
+- expressive routing
+- template rendering and djangoesque template language.
+- database api
+- staticfiles module for resolving of javascript and css files.
 
-featuring a easy to use & simplistic nosql database-api and a get/post() syntactic sugar locomotive.js will
-enable you to put out a blazingly fast prototype for your customer to view.
+Running on node.js makes this a very fast framework for setting up and starting development right away.
+Featuring a very syntactic sugar with the methods .get()/.post()/.put()/.delete()
+a developer can be sure that the right method is always used as it blocks the other types.
 
 ----
 
-Starting the server is as easy as a sunday morning:
+Starting a server is as easy as a sunday morning
 
-var app = require('./app').start(//portnumber//);
+var app = require('./app').start('portnumber');
 
-When creating a view you always get access to the views varables with the view object.
-The variables from the url is always stored as the name that you assign it.
+And resolving a request into a response is even easier
 
-Resolving to a response is very easy:
+1) create your method (app.get();)
+this takes a route and a callback with the request and response.
 
 app.get('/', function(request, response){
 	response.writeHead(200, {"Content-Type": "text/plain"});
@@ -22,7 +27,13 @@ app.get('/', function(request, response){
 	response.end();
 });
 
+2) Open your browser and go to 127.0.0.1:yourportnumber/ and see the result!
+
 Creating a more advanced view:
+
+When creating a view you always get access to the views varables with the view object.
+The variables from the url is always stored as the name that you assign it.
+
 
 app.get('/someURL/{id}/', function(request, response) {
 	var id = request.view.id;
