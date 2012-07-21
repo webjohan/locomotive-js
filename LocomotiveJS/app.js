@@ -13,7 +13,7 @@ var app = module.exports = {
 		}).listen(port);
 		return self;
 	},
-	handlers : urls.registerUrls(),
+	handlers : [],
     route : function(url, fn, type) {
         this.handlers.push({ url: url, fn: fn, type: type });
     },
@@ -33,6 +33,7 @@ var app = module.exports = {
         		if(obj !== undefined)
         			if(obj.parsed)
             			path = obj.url;
+            	if (path.charAt(path.length - 1) !== '/') path += '/';
         		if (handler.url === path && request.method === handler['type']) {
         			return handler.fn(request, response);
         		}

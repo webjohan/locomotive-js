@@ -33,11 +33,11 @@ app.get('/ajax', function(request, response) {
 app.get('/find/view/{id}/', function(request, response) {
 	//outside the db scope we have access to the request.view object.
 	//thus we can build our db query from here.
-	console.log(request.view);
 	db.find({'name':'henrik'}, 'users', function(object){
 		object = object[0];
 		
 		object.superid = request.view.id;
+		object.fn = request.view.firstName;
 		var context = {user: object};
 		resolver.renderTemplateOr404('user.html', context, request, response);
 	});
