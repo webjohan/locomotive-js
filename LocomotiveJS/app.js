@@ -39,7 +39,7 @@ var app = module.exports = {
         		}
         	}
         }
-        resolver.raise404(response);
+        resolver.raiseViewDoesNotExist(request, response);
     },
     get: function(url, fn) {
     	this.route(url, fn, 'GET');
@@ -63,8 +63,6 @@ function _parseUrl(regexifiedUrl, url, request) {
     for(exp in foundExps) {
     	if(regexifiedUrl.indexOf(foundExps[exp]) !== -1) {
     		transformedurl = transformedurl.length === 0 ? regexifiedUrl.replace(foundExps[exp], exps[foundExps[exp]]) : transformedurl.replace(foundExps[exp], exps[foundExps[exp]]);
-    	} else {
-    		return {'parsed':true, 'url':url};
     	}
     	var regex = new RegExp(transformedurl);
 		if(url.match(regex)){

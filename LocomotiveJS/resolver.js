@@ -75,8 +75,8 @@ var renderer = module.exports = {
   raise500 : function (httpResponse) {
 	this.raiseErrorTemplate(500, httpResponse);
   },
-  raiseErrorTemplate : function(statusCode, httpResponse, data) {
-    var html = _getErrorTemplate(statusCode, data);
+  raiseErrorTemplate : function(type, statusCode, httpResponse, data) {
+    var html = _getErrorTemplate(type !== '' ? type : statusCode, data);
     httpResponse.writeHeader(statusCode, _generateContentType('html'));
     httpResponse.end(html);
   },
@@ -85,9 +85,17 @@ var renderer = module.exports = {
 	  var self = this;
 	  _formatStackTrace(error.stack, function(object){
 		  var errorData = { 'stack': object, 'url':httpRequest.url };
-		  self.raiseErrorTemplate("templateError", httpResponse, errorData);
-	  });
-  }
+		  self.raiseErrorTemplate("templateError", 500, httpResponse, errorData);
+	  }, true);
+  },
+  raiseViewDoesNotExist: function(httpRequest, httpResponse) {
+  	var error = new Error("ViewDoesNotExist");
+  	var self = this;
+  	_formatStackTrace(error.stack, function(object){
+  		var errorData = {'stack':object, 'url':httpRequest.url };
+  		self.raiseErrorTemplate("viewDoesNotExist", 404, httpResponse, errorData);
+  	}, false);	
+  },
 };
 
 
@@ -144,7 +152,7 @@ function _toJson(data) {
 	return json;
 }
 
-function _formatStackTrace(stacktrace, fn) {
+function _formatStackTrace(stacktrace, fn, marked) {
 	stacktrace = stacktrace.replace(/\sat\s/g,"<br/>at ");
 	var array = stacktrace.split('<br/>at ');
 	var newDict = {};
@@ -158,7 +166,10 @@ function _formatStackTrace(stacktrace, fn) {
 	
 	sortedArray = _sortArray(unsortedArray);
     var closestStackTraceLine = array[newDict[sortedArray[0].toString()]];
-    array[newDict[sortedArray[0].toString()]] = '<span class="stacktraceError"><b>'+closestStackTraceLine+'</b></span>';
+    if (marked)
+    	array[newDict[sortedArray[0].toString()]] = '<span class="stacktraceError"><b>'+closestStackTraceLine+'</b></span>';
+    else
+    	array[newDict[sortedArray[0].toString()]] = ''+closestStackTraceLine+'';
     stacktrace = array.join("<br/>at ");
 	return fn(stacktrace);
 }

@@ -35,9 +35,7 @@ app.get('/find/view/{id}/', function(request, response) {
 	//thus we can build our db query from here.
 	db.find({'name':'henrik'}, 'users', function(object){
 		object = object[0];
-		
 		object.superid = request.view.id;
-		object.fn = request.view.firstName;
 		var context = {user: object};
 		resolver.renderTemplateOr404('user.html', context, request, response);
 	});
