@@ -1,4 +1,4 @@
-var app = require('./app').start('1337'),
+var app = require('./app').start({'cache':true},'1337'),
 	resolver = require('./resolver'),
 	db = require('./db');
 
@@ -8,14 +8,14 @@ app.get('/', function(request, response) {
 	response.end();
 });
 
-app.get('/start', function(request, response) {
+app.get('/started/', function(request, response) {
 	db.find({}, 'users', function(object){
 		var context = {};
 		resolver.renderTemplateOr404('start.html', context, request, response);
 	});
 });
 
-app.post('/start', function(request, response) {
+app.post('/start/', function(request, response) {
 	request.on('end', function(){
 		var post = request.data; //sanitize data
 		resolver.renderTemplateOr404('start.html', post, request, response);

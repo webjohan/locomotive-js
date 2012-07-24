@@ -2,14 +2,18 @@ var processor = require('./requestprocessor'),
     urllib = require('url'),
     resolver = require('./resolver'),
     http = require('http'),
-    urls = require('./urls');
+    urls = require('./urls'),
+	cache = require('./cache');
 
 var app = module.exports = {
-	start: function(port){
+	start: function(settings, port){
 		var self = this;
 		http.createServer(function(request, response){
+			if(settings.cache === true){
+				cache.initStore();
+				self.cacheEnabled = true;
+			}
 			self.preProcess(self, request, response);
-			//init middlewares from settings
 		}).listen(port);
 		return self;
 	},
@@ -23,7 +27,7 @@ var app = module.exports = {
         if(path.indexOf('/staticfiles/') != -1) {
         	path = '/staticfiles/';
         	filename = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.length);
-        	return resolver.resolveResourceOr404(filename, request, response);
+          	return resolver.resolveResourceOr404(filename, request, response);
         }
         var l = app.handlers.length, handler;
         for (var i = 0; i < l; i++) {
