@@ -1,3 +1,8 @@
+body {
+	background-color: #FFFFCC
+}
 .stacktraceError {
-	background-color: #FCA69D;
+	background-color: #FF3333;
+	font-size: 22px;
+	padding: 0 10px 0 10px;
 }

@@ -42,7 +42,7 @@ var renderer = module.exports = {
 				html = compiledTemplate.render();
 			_render(html, httpResponse);
 		} else {
-			self.raiseTemplateMissing(httpResponse);
+			self.raiseTemplateMissing(httpRequest, 	httpResponse);
 		}
 	});
   },
@@ -84,20 +84,19 @@ var renderer = module.exports = {
 	  var error = new Error("Template missing");
 	  var self = this;
 	  _formatStackTrace(error.stack, function(object){
-		  var errorData = { 'stack': object, 'url':httpRequest.url };
+		  var errorData = { 'stack': object, 'url': httpRequest.url };
 		  self.raiseErrorTemplate("templateError", 500, httpResponse, errorData);
 	  }, true);
   },
   raiseViewDoesNotExist: function(httpRequest, httpResponse) {
   	var error = new Error("ViewDoesNotExist");
   	var self = this;
-  	_formatStackTrace(error.stack, function(object){
+  	_formatStackTrace(error.stack, function(object) {
   		var errorData = {'stack':object, 'url':httpRequest.url };
   		self.raiseErrorTemplate("viewDoesNotExist", 404, httpResponse, errorData);
   	}, false);	
   },
 };
-
 
 function _render(html, httpResponse) {
 	httpResponse.writeHeader(200, _generateContentType('html'));
@@ -117,28 +116,28 @@ function _generateContentType(contentType) {
 	/**
 	 * extend list to lots of types
 	 */
-	switch(contentType){
-	case 'json': ctype = 'application/json'; break;
-	case 'xml': ctype = 'application/xml'; break;
-	case 'atom': ctype = 'application/atom+xml'; break;
-	case 'ecmascript': ctype = 'application/ecmascript'; break;
-	case 'edi-x12': ctype = 'application/EDI-X12'; break;
-	case 'edifact': ctype = 'application/EDIFACT'; break;
-	case 'javascript': ctype = 'application/javascript'; break;
-	case 'octet-stream': ctype = 'application/octet-stream'; break;
-	case 'ogg': ctype = 'application/ogg'; break;
-	case 'pdf': ctype = 'application/pdf'; break;
-	case 'postscript': ctype = 'application/postscript'; break;
-	case 'rdf+xml': ctype = 'application/rdf+xml'; break;
-	case 'rss': ctype = 'application/rss+xml'; break;
-	case 'soap': ctype = 'application/soap+xml'; break;
-	case 'font-woff': ctype = 'application/font-woff'; break;
-	case 'xhtml': ctype = 'application/xhtml+xml'; break;
-	case 'xml-dtd': ctype = 'application/xml-dtd'; break;
-	case 'xop': ctype = 'application/xop+xml'; break;
-	case 'zip': ctype = 'application/zip'; break;
-	case 'gzip': ctype = 'application/x-gzip'; break;
-	case 'html' : ctype = 'text/html'; break;
+	switch(contentType) {
+		case 'json': ctype = 'application/json'; break;
+		case 'xml': ctype = 'application/xml'; break;
+		case 'atom': ctype = 'application/atom+xml'; break;
+		case 'ecmascript': ctype = 'application/ecmascript'; break;
+		case 'edi-x12': ctype = 'application/EDI-X12'; break;
+		case 'edifact': ctype = 'application/EDIFACT'; break;
+		case 'javascript': ctype = 'application/javascript'; break;
+		case 'octet-stream': ctype = 'application/octet-stream'; break;
+		case 'ogg': ctype = 'application/ogg'; break;
+		case 'pdf': ctype = 'application/pdf'; break;
+		case 'postscript': ctype = 'application/postscript'; break;
+		case 'rdf+xml': ctype = 'application/rdf+xml'; break;
+		case 'rss': ctype = 'application/rss+xml'; break;
+		case 'soap': ctype = 'application/soap+xml'; break;
+		case 'font-woff': ctype = 'application/font-woff'; break;
+		case 'xhtml': ctype = 'application/xhtml+xml'; break;
+		case 'xml-dtd': ctype = 'application/xml-dtd'; break;
+		case 'xop': ctype = 'application/xop+xml'; break;
+		case 'zip': ctype = 'application/zip'; break;
+		case 'gzip': ctype = 'application/x-gzip'; break;
+		case 'html' : ctype = 'text/html'; break;
 	}
 	return {'Content-Type': ctype};
 }
