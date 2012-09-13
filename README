@@ -7,8 +7,10 @@ It features:
 - staticfiles module for resolving of javascript and css files.
 
 Running on node.js makes this a very fast framework for setting up and starting development right away.
-Featuring a very syntactic sugar with the methods .get()/.post()/.put()/.delete()
+Featuring a very syntactic sugar with the methods .get()/.post()/.put()
 a developer can be sure that the right method is always used as it blocks the other types.
+
+delete() not supported yet due to not finding a proper way of dealing with delete-keyword.
 
 ----
 

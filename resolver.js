@@ -1,7 +1,9 @@
 var path = require('path'), 
 	fs = require('fs'),
 	paperboy = require('paperboy'),
-	templateRenderer = require('swig');
+	templateRenderer = require('swig'),
+	cache = require('./cache'),
+	settings = require('./settings');
 /**
  * Configuration below
  */
@@ -32,7 +34,7 @@ var renderer = module.exports = {
 	if (template === null || template === undefined || template === ''){
 		self.raiseTemplateMissing(httpRequest, httpResponse);
 	}
-	templatepath = 'templates/'+template; //this folder should be read from props.
+	templatepath = settings.TEMPLATES_DIR+template; //this folder should be read from props.
 	path.exists(templatepath, function(exists) {
 		if(exists){
 			compiledTemplate = templateRenderer.compileFile(templatepath);

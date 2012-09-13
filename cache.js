@@ -1,7 +1,7 @@
-var store;
 var cache = module.exports = {
 	initStore : function(){
-		store = {};
+		if(this.store == undefined)
+			this.store = {'isEnabled':true};
 	},
 	put : function(key, request, expiration){
 		//store[key] = {'url':request.url, 'session':request.session};
@@ -25,5 +25,4 @@ var cache = module.exports = {
 	statistics : function(){},
 	size : function(){},
 	storage : function(storageType){}
-		
 };

@@ -3,15 +3,15 @@ var processor = require('./requestprocessor'),
     resolver = require('./resolver'),
     http = require('http'),
     urls = require('./urls'),
-	cache = require('./cache');
+	cache = require('./cache'),
+	settings = require('./settings');
 
 var app = module.exports = {
-	start: function(settings, port){
+	start: function(port){
 		var self = this;
 		http.createServer(function(request, response){
-			if(settings.cache === true){
+			if(settings.CACHE === true){
 				cache.initStore();
-				self.cacheEnabled = true;
 			}
 			self.preProcess(self, request, response);
 		}).listen(port);
@@ -24,20 +24,21 @@ var app = module.exports = {
     preProcess: function onRequest(app, request, response){
         processor.preRequest(request);
         var path = urllib.parse(request.url).pathname;
-        if(path.indexOf('/staticfiles/') != -1) {
-        	path = '/staticfiles/';
-        	filename = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.length);
-          	return resolver.resolveResourceOr404(filename, request, response);
+        if(path.indexOf(settings.STATICFILES_DIR) != -1) {
+        	path = settings.STATICFILES_DIR;
+        	requestedFile = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.length);
+          	return resolver.resolveResourceOr404(requestedFile, request, response);
         }
         var l = app.handlers.length, handler;
         for (var i = 0; i < l; i++) {
         	handler = app.handlers[i];
         	if(handler.url !== undefined){
-        		var obj = _parseUrl(handler.url, path, request);
-        		if(obj !== undefined)
-        			if(obj.parsed)
-            			path = obj.url;
-            	if (path.charAt(path.length - 1) !== '/') path += '/';
+        		var parsedUrlObject = _parseUrl(handler.url, path, request);
+        		if(parsedUrlObject !== undefined)
+        			if(parsedUrlObject.parsed)
+            			path = parsedUrlObject.url;
+            	if (path.charAt(path.length - 1) !== '/') 
+            		path += '/';
         		if (handler.url === path && request.method === handler['type']) {
         			return handler.fn(request, response);
         		}
@@ -51,6 +52,9 @@ var app = module.exports = {
     },
     post: function(url, fn) {
     	this.route(url, fn, 'POST');
+    },
+    put : function(url, fn) {
+    	this.route(url, fn, 'PUT');
     }
 };
 

@@ -19,7 +19,6 @@ exports.preRequest = function preRequest(request) {
 	}
 };
 
-
 function _is_ajax(headers) {
 	for (header in headers)
 		if (headers[header] === 'XMLHttpRequest')
